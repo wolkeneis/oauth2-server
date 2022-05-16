@@ -1,17 +1,16 @@
 import { AuthorizationError } from "errors";
-import { Response, NextFunction, Request } from "express";
+import { NextFunction, Request, Response } from "express";
 import { OAuth2Request, OAuth2Transaction } from "index";
 import { Parser } from "parsers/parser";
 import { v4 as uuidv4 } from "uuid";
 
 export class CodeParser implements Parser {
-  constructor() {}
-
   async request(request: Request): Promise<OAuth2Request> {
-    var clientId = request.query.client_id,
+    const clientId = request.query.client_id,
       redirectUri = request.query.redirect_uri,
-      scope = request.query.scope,
       state = request.query.state;
+
+    let scope = request.query.scope;
 
     if (!clientId) {
       throw new AuthorizationError(`I need the following field to work: ${"client_id"}`, "invalid_request");
@@ -24,7 +23,7 @@ export class CodeParser implements Parser {
     }
     if (scope) {
       if (typeof scope !== "string") {
-      throw new AuthorizationError(`The following field has to be a string: ${"scope"}`, "invalid_request");
+        throw new AuthorizationError(`The following field has to be a string: ${"scope"}`, "invalid_request");
       }
       scope = scope.split(" ");
     }
@@ -37,6 +36,10 @@ export class CodeParser implements Parser {
       state: state
     };
   }
-  async response(transaction: OAuth2Transaction, response: Response): Promise<void> {}
-  async errorHandler(error: Error, transaction: OAuth2Transaction, response: Response, next: NextFunction): Promise<void> {}
+  async response(_transaction: OAuth2Transaction, _response: Response): Promise<void> {
+    throw new Error("Unimplemented.");
+  }
+  async errorHandler(_error: Error, _transaction: OAuth2Transaction, _response: Response, _next: NextFunction): Promise<void> {
+    throw new Error("Unimplemented.");
+  }
 }

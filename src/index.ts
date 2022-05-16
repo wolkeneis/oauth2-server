@@ -1,19 +1,17 @@
-declare global {
-  namespace Express {
-    interface Request {
-      oauth2?: OAuth2Transaction;
-      session: {
-        oauth2?: {
-          [key: string]: OAuth2SerializedTransaction;
-        };
+declare module "Express" {
+  interface Request {
+    oauth2?: OAuth2Transaction;
+    session: {
+      oauth2?: {
+        [key: string]: OAuth2SerializedTransaction;
       };
-    }
+    };
   }
 }
 
 export interface OAuth2Transaction {
   client: OAuth2Client;
-  user: any;
+  user: OAuth2User;
   redirectUri: string;
   transactionId: string;
   request: OAuth2Request;
@@ -32,14 +30,18 @@ export interface OAuth2Request {
   clientId: string;
   redirectUri: string;
   scope: string[];
-  state: any;
+  state: OAuth2State;
   transactionId: string;
   type: string;
 }
 
 export interface OAuth2Info {
-  allow: boolean,
+  allow: boolean;
   scope?: string[];
 }
 
-export type OAuth2Client = any;
+export type OAuth2Client = unknown;
+
+export type OAuth2User = unknown;
+
+export type OAuth2State = unknown;

@@ -19,4 +19,4 @@ export class OAuth2Server {
   async deserializeClient(identifier: string): Promise<OAuth2Client> {
     return await this._clientDeserializer(identifier);
   }
-};
+}
