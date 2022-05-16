@@ -33,7 +33,7 @@ export async function store(server: OAuth2Server, request: Request, transaction:
   if (!request.session) {
     throw new Error("I need a session..., Did you forget app.use(express.session(...))?");
   }
-  const clientId = await server.deserializeClient(transaction.client);
+  const clientId = await server.serializeClient(transaction.client);
   const serializedTransaction: OAuth2SerializedTransaction = {
     clientId: clientId,
     redirectUri: transaction.redirectUri,

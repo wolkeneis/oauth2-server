@@ -1,4 +1,4 @@
-declare module "Express" {
+declare module "express-serve-static-core" {
   interface Request {
     oauth2?: OAuth2Transaction;
     session: {
