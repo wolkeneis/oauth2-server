@@ -4,7 +4,15 @@ import { OAuth2Request, OAuth2Transaction } from "index";
 import { Parser } from "parsers/parser";
 import { v4 as uuidv4 } from "uuid";
 
+export type IssueCodeFunction = (transaction: OAuth2Transaction) => Promise<string>;
+
 export class CodeParser implements Parser {
+  issue: IssueCodeFunction;
+
+  constructor(issue: IssueCodeFunction) {
+    this.issue = issue;
+  }
+
   async request(request: Request): Promise<OAuth2Request> {
     const clientId = request.query.client_id,
       redirectUri = request.query.redirect_uri,

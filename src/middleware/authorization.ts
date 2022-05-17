@@ -1,8 +1,7 @@
 import { AuthorizationError } from "errors";
 import { RequestHandler } from "express";
 import { OAuth2Client, OAuth2Info, OAuth2Request, OAuth2Transaction } from "index";
-import { CodeParser } from "parsers/grant/code";
-import { OAuth2Server } from "server";
+import { OAuth2Server, types } from "server";
 import { store } from "session";
 
 export type ValidateFunction = (request: OAuth2Request) => Promise<OAuth2Client>;
@@ -15,17 +14,15 @@ export default function (server: OAuth2Server, validate: ValidateFunction, immed
     if (!type) {
       return next(new AuthorizationError(`I need the following field to work: ${"response_type"}`, "invalid_request"));
     }
+    let parser = server.getParser(types.grant, type);
+    if (!parser) {
+      return next(new AuthorizationError(`The response type "${type}" is unsupported.`, "unsupported_response_type"));
+    }
     let parsedRequest: OAuth2Request;
-    switch (type) {
-      case "code":
-        try {
-          parsedRequest = await new CodeParser().request(req);
-        } catch (error) {
-          return next(error);
-        }
-        break;
-      default:
-        return next(new AuthorizationError(`The response type "${type}" is unsupported.`, "unsupported_response_type"));
+    try {
+      parsedRequest = await parser.request(req);
+    } catch (error) {
+      return next(error);
     }
     let client: OAuth2Client;
     try {
@@ -49,15 +46,14 @@ export default function (server: OAuth2Server, validate: ValidateFunction, immed
       return next(new AuthorizationError("An internal server error occurred."));
     }
     if (transaction.info.allow) {
-      switch (type) {
-        case "code":
-          try {
-            return await new CodeParser().response(transaction, res);
-          } catch (error) {
-            return next(error);
-          }
-        default:
-          return next(new AuthorizationError(`The response type "${type}" is unsupported.`, "unsupported_response_type"));
+      let parser = server.getParser(types.grant, type);
+      if (!parser) {
+        return next(new AuthorizationError(`The response type "${type}" is unsupported.`, "unsupported_response_type"));
+      }
+      try {
+        return await parser.response(transaction, res);
+      } catch (error) {
+        return next(error);
       }
     } else {
       try {
