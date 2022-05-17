@@ -4,7 +4,10 @@ import { Parser } from "parsers/parser";
 export type ClientSerializer = (client: OAuth2Client) => Promise<string>;
 export type ClientDeserializer = (identifier: string) => Promise<OAuth2Client>;
 
-export enum types {grant = "_grants", exchange = "_exchanges"};
+export enum types {
+  grant = "_grants",
+  exchange = "_exchanges"
+}
 
 export class OAuth2Server {
   private _clientSerializer: ClientSerializer;

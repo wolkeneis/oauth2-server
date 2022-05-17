@@ -14,7 +14,7 @@ export default function (server: OAuth2Server, validate: ValidateFunction, immed
     if (!type) {
       return next(new AuthorizationError(`I need the following field to work: ${"response_type"}`, "invalid_request"));
     }
-    let parser = server.getParser(types.grant, type);
+    const parser = server.getParser(types.grant, type);
     if (!parser) {
       return next(new AuthorizationError(`The response type "${type}" is unsupported.`, "unsupported_response_type"));
     }
@@ -46,7 +46,7 @@ export default function (server: OAuth2Server, validate: ValidateFunction, immed
       return next(new AuthorizationError("An internal server error occurred."));
     }
     if (transaction.info.allow) {
-      let parser = server.getParser(types.grant, type);
+      const parser = server.getParser(types.grant, type);
       if (!parser) {
         return next(new AuthorizationError(`The response type "${type}" is unsupported.`, "unsupported_response_type"));
       }

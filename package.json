@@ -19,9 +19,10 @@
   },
   "homepage": "https://github.com/wolkeneis/oauth2-server",
   "engines": {
-    "node": "^16.14.0",
+    "node": "*",
     "vscode": "^1.22.0",
-    "npm": "^8.10.0"
+    "npm": "^8.x.x",
+    "pnpm": "7.x.x"
   },
   "main": "src/index",
   "bin": {},
