@@ -1,29 +1,23 @@
 import { OAuth2Client } from "index";
-import { Parser } from "parsers/parser";
+import { Exchange } from "parsers/exchange/exchange";
+import { Grant } from "parsers/grant/grant";
 
 export type ClientSerializer = (client: OAuth2Client) => Promise<string>;
 export type ClientDeserializer = (identifier: string) => Promise<OAuth2Client>;
 
-export enum types {
-  grant = "_grants",
-  exchange = "_exchanges"
-}
-
 export class OAuth2Server {
   private _clientSerializer: ClientSerializer;
   private _clientDeserializer: ClientDeserializer;
-  private _grants: {
-    [key: string]: Parser;
-  };
-  private _exchanges: {
-    [key: string]: Parser;
-  };
+  grants: {
+    [key: string]: Grant;
+  } = {};
+  exchanges: {
+    [key: string]: Exchange;
+  } = {};
 
   constructor(clientSerializer: ClientSerializer, clientDeserializer: ClientDeserializer) {
     this._clientSerializer = clientSerializer;
     this._clientDeserializer = clientDeserializer;
-    this._grants = {};
-    this._exchanges = {};
   }
 
   async serializeClient(client: OAuth2Client): Promise<string> {
@@ -34,11 +28,19 @@ export class OAuth2Server {
     return await this._clientDeserializer(identifier);
   }
 
-  addParser(type: types, responseType: string, parser: Parser) {
-    this[type][responseType] = parser;
+  addGrant(responseType: string, grant: Grant) {
+    this.grants[responseType] = grant;
   }
 
-  getParser(type: types, responseType: string): Parser | undefined {
-    return this[type][responseType];
+  grant(responseType: string): Grant {
+    return this.grants[responseType];
+  }
+
+  addExchange(responseType: string, exchange: Exchange) {
+    this.exchanges[responseType] = exchange;
+  }
+
+  exchange(responseType: string): Exchange {
+    return this.exchanges[responseType];
   }
 }

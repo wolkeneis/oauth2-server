@@ -1,13 +1,13 @@
 import { AuthorizationError } from "errors";
 import { NextFunction, Request, Response } from "express";
 import { OAuth2Request, OAuth2Transaction } from "index";
-import { Parser } from "parsers/parser";
+import { Grant } from "parsers/grant/grant";
 import { stringify } from "querystring";
 import { v4 as uuidv4 } from "uuid";
 
 export type IssueCodeFunction = (transaction: OAuth2Transaction) => Promise<string>;
 
-export class CodeParser implements Parser {
+export class CodeGrant implements Grant {
   issue: IssueCodeFunction;
 
   constructor(issue: IssueCodeFunction) {

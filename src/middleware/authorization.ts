@@ -1,7 +1,7 @@
 import { AuthorizationError } from "errors";
 import { RequestHandler } from "express";
 import { OAuth2Client, OAuth2Info, OAuth2Request, OAuth2Transaction } from "index";
-import { OAuth2Server, types } from "server";
+import { OAuth2Server } from "server";
 import { store } from "session";
 
 export type ValidateFunction = (request: OAuth2Request) => Promise<OAuth2Client>;
@@ -14,7 +14,7 @@ export default function (server: OAuth2Server, validate: ValidateFunction, immed
     if (!type) {
       return next(new AuthorizationError(`I need the following field to work: ${"response_type"}`, "invalid_request"));
     }
-    const parser = server.getParser(types.grant, type);
+    const parser = server.grant(type);
     if (!parser) {
       return next(new AuthorizationError(`The response type "${type}" is unsupported.`, "unsupported_response_type"));
     }
@@ -46,7 +46,7 @@ export default function (server: OAuth2Server, validate: ValidateFunction, immed
       return next(new AuthorizationError("An internal server error occurred."));
     }
     if (transaction.info.allow) {
-      const parser = server.getParser(types.grant, type);
+      const parser = server.grant(type);
       if (!parser) {
         return next(new AuthorizationError(`The response type "${type}" is unsupported.`, "unsupported_response_type"));
       }
