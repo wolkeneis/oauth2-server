@@ -59,7 +59,16 @@ export class CodeParser implements Parser {
       return next(error);
     }
   }
-  async errorHandler(_error: Error, _transaction: OAuth2Transaction, _response: Response, _next: NextFunction): Promise<void> {
-    throw new Error("Unimplemented.");
+  async errorHandler(error: Error, transaction: OAuth2Transaction, response: Response, next: NextFunction): Promise<void> {
+    if (!this._isAuthorizationError(error)) {
+      return next(error);
+    }
+    return response.redirect(
+      `${transaction.redirectUri}?${stringify({ error: error.code, error_description: error.message, error_uri: error.uri })}`
+    );
+  }
+
+  _isAuthorizationError(error: Error): error is AuthorizationError {
+    return (error as AuthorizationError).code != undefined;
   }
 }
