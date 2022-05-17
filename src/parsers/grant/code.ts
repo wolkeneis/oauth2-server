@@ -2,6 +2,7 @@ import { AuthorizationError } from "errors";
 import { NextFunction, Request, Response } from "express";
 import { OAuth2Request, OAuth2Transaction } from "index";
 import { Parser } from "parsers/parser";
+import { stringify } from "querystring";
 import { v4 as uuidv4 } from "uuid";
 
 export type IssueCodeFunction = (transaction: OAuth2Transaction) => Promise<string>;
@@ -44,8 +45,19 @@ export class CodeParser implements Parser {
       state: state
     };
   }
-  async response(_transaction: OAuth2Transaction, _response: Response): Promise<void> {
-    throw new Error("Unimplemented.");
+  async response(transaction: OAuth2Transaction, response: Response, next: NextFunction): Promise<void> {
+    if (!transaction.info?.allow) {
+      return response.redirect(`${transaction.redirectUri}?${stringify({ error: "access_denied" })}`);
+    }
+    try {
+      const code = await this.issue(transaction);
+      if (!code) {
+        return next(new AuthorizationError("I denied the request.", "access_denied"));
+      }
+      return response.redirect(`${transaction.redirectUri}?${stringify({ code: code })}`);
+    } catch (error) {
+      return next(error);
+    }
   }
   async errorHandler(_error: Error, _transaction: OAuth2Transaction, _response: Response, _next: NextFunction): Promise<void> {
     throw new Error("Unimplemented.");
