@@ -1,4 +1,4 @@
-import { AuthorizationError } from "errors";
+import { AuthorizationError, ForbiddenError } from "errors";
 import { RequestHandler } from "express";
 import { OAuth2Client, OAuth2Info, OAuth2Request, OAuth2Transaction } from "index";
 import { OAuth2Server, types } from "server";
@@ -51,7 +51,7 @@ export default function (server: OAuth2Server, validate: ValidateFunction, immed
         return next(new AuthorizationError(`The response type "${type}" is unsupported.`, "unsupported_response_type"));
       }
       try {
-        return await parser.response(transaction, res);
+        return await parser.response(transaction, res, next);
       } catch (error) {
         return next(error);
       }
