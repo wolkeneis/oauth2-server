@@ -1,4 +1,4 @@
-import { AuthorizationError, ForbiddenError } from "errors";
+import { AuthorizationError } from "errors";
 import { RequestHandler } from "express";
 import { OAuth2Client, OAuth2Info, OAuth2Request, OAuth2Transaction } from "index";
 import { OAuth2Server, types } from "server";
