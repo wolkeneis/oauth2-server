@@ -1,32 +1,38 @@
+import { Request, Response, NextFunction, RequestHandler } from "express-serve-static-core";
+import CodeGrant from "./grant/code";
+import CodeExchange from "./exchange/code";
+import OAuth2Server from "./server";
+
 declare module "express-serve-static-core" {
   interface Request {
-    oauth2?: OAuth2Transaction;
+    oauth2?: OAuth2Transaction<any, any, any>;
     session: {
       oauth2?: {
-        [key: string]: OAuth2SerializedTransaction;
+        [key: string]: OAuth2SerializedTransaction<any>;
       };
     };
   }
 }
+export { OAuth2Server, CodeGrant, CodeExchange };
 
-export interface OAuth2Transaction {
+export interface OAuth2Transaction<OAuth2Client, OAuth2User, OAuth2State> {
   client: OAuth2Client;
   user: OAuth2User;
   redirectUri: string;
   transactionId: string;
-  request: OAuth2Request;
+  request: OAuth2Request<OAuth2State>;
   info?: OAuth2Info;
 }
 
-export interface OAuth2SerializedTransaction {
+export interface OAuth2SerializedTransaction<OAuth2State> {
   clientId: string;
   redirectUri: string;
   transactionId: string;
-  request: OAuth2Request;
+  request: OAuth2Request<OAuth2State>;
   info?: OAuth2Info;
 }
 
-export interface OAuth2Request {
+export interface OAuth2Request<OAuth2State> {
   clientId: string;
   redirectUri: string;
   scope: string[];
@@ -40,8 +46,37 @@ export interface OAuth2Info {
   scope?: string[];
 }
 
-export type OAuth2Client = unknown;
+export type OAuth2Tokens = {
+  accessToken: string;
+  refreshToken?: string;
+  tokenType?: string;
+} | null;
 
-export type OAuth2User = unknown;
+export type OAuth2Client = any;
 
-export type OAuth2State = unknown;
+export type OAuth2User = any;
+
+export type OAuth2State = any;
+
+export type IssueTokenFunction = (client: OAuth2Client, code: string, redirectUri: string) => Promise<OAuth2Tokens>;
+
+export type IssueCodeFunction = (transaction: OAuth2Transaction<any, any, any>) => Promise<string>;
+
+export type ValidateFunction = (request: OAuth2Request<any>) => Promise<OAuth2Client>;
+
+export type ImmediateFunction = (transaction: OAuth2Transaction<any, any, any>) => Promise<OAuth2Info>;
+
+export type ClientSerializer = (client: OAuth2Client) => Promise<string>;
+export type ClientDeserializer = (identifier: string) => Promise<OAuth2Client>;
+
+export interface Grant {
+  _type: () => string;
+  request: (request: Request) => Promise<OAuth2Request<any>>;
+  response: (transaction: OAuth2Transaction<any, any, any>, response: Response, next: NextFunction) => Promise<void>;
+  errorHandler: (error: Error, transaction: OAuth2Transaction<any, any, any>, response: Response, next: NextFunction) => Promise<void>;
+}
+
+export interface Exchange {
+  _type: () => string;
+  exchange: () => RequestHandler;
+}

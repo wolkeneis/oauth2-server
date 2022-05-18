@@ -1,20 +1,21 @@
-import { AuthorizationError } from "errors";
 import { NextFunction, Request, Response } from "express";
-import { OAuth2Request, OAuth2Transaction } from "index";
-import { Grant } from "parsers/grant/grant";
 import { stringify } from "querystring";
 import { v4 as uuidv4 } from "uuid";
+import { Grant, IssueCodeFunction, OAuth2Request, OAuth2Transaction } from "../index.js";
+import { AuthorizationError } from "../errors";
 
-export type IssueCodeFunction = (transaction: OAuth2Transaction) => Promise<string>;
-
-export class CodeGrant implements Grant {
+export default class CodeGrant implements Grant {
   issue: IssueCodeFunction;
 
   constructor(issue: IssueCodeFunction) {
     this.issue = issue;
   }
 
-  async request(request: Request): Promise<OAuth2Request> {
+  _type() {
+    return "code";
+  }
+
+  async request(request: Request): Promise<OAuth2Request<any>> {
     const clientId = request.query.client_id,
       redirectUri = request.query.redirect_uri,
       state = request.query.state;
@@ -45,7 +46,7 @@ export class CodeGrant implements Grant {
       state: state
     };
   }
-  async response(transaction: OAuth2Transaction, response: Response, next: NextFunction): Promise<void> {
+  async response(transaction: OAuth2Transaction<any, any, any>, response: Response, next: NextFunction): Promise<void> {
     if (!transaction.info?.allow) {
       return response.redirect(`${transaction.redirectUri}?${stringify({ error: "access_denied" })}`);
     }
@@ -59,7 +60,7 @@ export class CodeGrant implements Grant {
       return next(error);
     }
   }
-  async errorHandler(error: Error, transaction: OAuth2Transaction, response: Response, next: NextFunction): Promise<void> {
+  async errorHandler(error: Error, transaction: OAuth2Transaction<any, any, any>, response: Response, next: NextFunction): Promise<void> {
     if (!this._isAuthorizationError(error)) {
       return next(error);
     }

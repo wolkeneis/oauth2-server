@@ -1,8 +1,8 @@
-import { AuthorizationError, ForbiddenError } from "errors";
+import { AuthorizationError, ForbiddenError } from "../errors";
 import { RequestHandler } from "express";
-import { OAuth2Transaction } from "index";
-import { OAuth2Server } from "server";
-import { remove } from "session";
+import { OAuth2Transaction } from "../index.js";
+import OAuth2Server from "../server";
+import { remove } from "../session";
 
 export default function (server: OAuth2Server): RequestHandler {
   return async function (req, res, next) {
@@ -13,7 +13,7 @@ export default function (server: OAuth2Server): RequestHandler {
       throw new Error("I need a valid transaction..., Did you forget app.use(oauth2server.transaction(...))?");
     }
 
-    const transaction: OAuth2Transaction = req.oauth2;
+    const transaction: OAuth2Transaction<any, any, any> = req.oauth2;
 
     (transaction.info = transaction.info ?? { allow: false }).allow = !req.body.cancel || !!req.oauth2.info?.allow;
 

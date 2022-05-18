@@ -1,8 +1,8 @@
-import { BadRequestError } from "errors";
+import { BadRequestError } from "../errors";
 import { RequestHandler } from "express";
-import { OAuth2Transaction } from "index";
-import { OAuth2Server } from "server";
-import { load } from "session";
+import { OAuth2Transaction } from "../index.js";
+import OAuth2Server from "../server";
+import { load } from "../session";
 
 export default function (server: OAuth2Server): RequestHandler {
   return async function (req, _res, next) {
@@ -14,7 +14,7 @@ export default function (server: OAuth2Server): RequestHandler {
       return next();
     }
     try {
-      const transaction: OAuth2Transaction = await load(server, req, transactionId);
+      const transaction: OAuth2Transaction<any, any, any> = await load(server, req, transactionId);
       req.oauth2 = transaction;
       return next();
     } catch (error) {

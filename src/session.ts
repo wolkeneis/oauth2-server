@@ -1,9 +1,9 @@
-import { BadRequestError, ForbiddenError } from "errors";
+import { BadRequestError, ForbiddenError } from "./errors";
 import { Request } from "express";
-import { OAuth2SerializedTransaction, OAuth2Transaction } from "./";
-import { OAuth2Server } from "./server";
+import { OAuth2SerializedTransaction, OAuth2Transaction } from "./index.js";
+import OAuth2Server from "./server";
 
-export async function load(server: OAuth2Server, request: Request, transactionId: string): Promise<OAuth2Transaction> {
+export async function load(server: OAuth2Server, request: Request, transactionId: string): Promise<OAuth2Transaction<any, any, any>> {
   if (!request.session) {
     throw new Error("I need a session..., Did you forget app.use(express.session(...))?");
   }
@@ -14,12 +14,12 @@ export async function load(server: OAuth2Server, request: Request, transactionId
   if (!user) {
     throw new ForbiddenError("No user found, are you sure that you're logged in?.");
   }
-  const serializedTransaction: OAuth2SerializedTransaction = request.session.oauth2[transactionId];
+  const serializedTransaction: OAuth2SerializedTransaction<any> = request.session.oauth2[transactionId];
   if (!serializedTransaction) {
     throw new BadRequestError(`I can't find a transaction with ${serializedTransaction} as the transaction identifier.`);
   }
   const client = await server.deserializeClient(serializedTransaction.clientId);
-  const transaction: OAuth2Transaction = {
+  const transaction: OAuth2Transaction<any, any, any> = {
     client: client,
     user: user,
     redirectUri: serializedTransaction.redirectUri,
@@ -29,12 +29,12 @@ export async function load(server: OAuth2Server, request: Request, transactionId
   };
   return transaction;
 }
-export async function store(server: OAuth2Server, request: Request, transaction: OAuth2Transaction): Promise<void> {
+export async function store(server: OAuth2Server, request: Request, transaction: OAuth2Transaction<any, any, any>): Promise<void> {
   if (!request.session) {
     throw new Error("I need a session..., Did you forget app.use(express.session(...))?");
   }
   const clientId = await server.serializeClient(transaction.client);
-  const serializedTransaction: OAuth2SerializedTransaction = {
+  const serializedTransaction: OAuth2SerializedTransaction<any> = {
     clientId: clientId,
     redirectUri: transaction.redirectUri,
     transactionId: transaction.transactionId,

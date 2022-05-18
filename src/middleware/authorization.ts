@@ -1,12 +1,8 @@
-import { AuthorizationError } from "errors";
+import { AuthorizationError } from "../errors";
 import { RequestHandler } from "express";
-import { OAuth2Client, OAuth2Info, OAuth2Request, OAuth2Transaction } from "index";
-import { OAuth2Server } from "server";
-import { store } from "session";
-
-export type ValidateFunction = (request: OAuth2Request) => Promise<OAuth2Client>;
-
-export type ImmediateFunction = (transaction: OAuth2Transaction) => Promise<OAuth2Info>;
+import { ImmediateFunction, OAuth2Client, OAuth2Request, OAuth2Transaction, ValidateFunction } from "../index.js";
+import OAuth2Server from "../server";
+import { store } from "../session";
 
 export default function (server: OAuth2Server, validate: ValidateFunction, immediate: ImmediateFunction): RequestHandler {
   return async function (req, res, next) {
@@ -18,7 +14,7 @@ export default function (server: OAuth2Server, validate: ValidateFunction, immed
     if (!parser) {
       return next(new AuthorizationError(`The response type "${type}" is unsupported.`, "unsupported_response_type"));
     }
-    let parsedRequest: OAuth2Request;
+    let parsedRequest: OAuth2Request<any>;
     try {
       parsedRequest = await parser.request(req);
     } catch (error) {
@@ -30,7 +26,7 @@ export default function (server: OAuth2Server, validate: ValidateFunction, immed
     } catch (error) {
       return next(error);
     }
-    const transaction: OAuth2Transaction = {
+    const transaction: OAuth2Transaction<any, any, any> = {
       client: client,
       user: req.user,
       redirectUri: parsedRequest.redirectUri,

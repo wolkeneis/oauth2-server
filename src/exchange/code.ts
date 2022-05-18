@@ -1,21 +1,16 @@
-import { ForbiddenError, TokenError } from "errors";
 import { RequestHandler } from "express";
-import { OAuth2Client } from "index";
-import { Exchange } from "./exchange";
+import { Exchange, IssueTokenFunction, OAuth2Tokens } from "../index.js";
+import { ForbiddenError, TokenError } from "../errors";
 
-export type Tokens = {
-  accessToken: string;
-  refreshToken?: string;
-  tokenType?: string;
-} | null;
-
-export type IssueTokenFunction = (client: OAuth2Client, code: string, redirectUri: string) => Promise<Tokens>;
-
-export class CodeExchange implements Exchange {
+export default class CodeExchange implements Exchange {
   issue: IssueTokenFunction;
 
   constructor(issue: IssueTokenFunction) {
     this.issue = issue;
+  }
+
+  _type() {
+    return "code";
   }
 
   exchange(): RequestHandler {
@@ -40,7 +35,7 @@ export class CodeExchange implements Exchange {
       }
 
       try {
-        const tokens: Tokens = await issue(client, code, redirectUri);
+        const tokens: OAuth2Tokens = await issue(client, code, redirectUri);
         if (!tokens) {
           return next(new TokenError("I denied the request because of an invalid authorization code or redirect_uri", "access_denied"));
         }

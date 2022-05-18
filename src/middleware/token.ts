@@ -1,6 +1,6 @@
-import { TokenError } from "errors";
+import { TokenError } from "../errors";
 import { RequestHandler } from "express";
-import { OAuth2Server } from "server";
+import OAuth2Server from "../server";
 
 export default function (server: OAuth2Server): RequestHandler {
   return async function (req, res, next) {
