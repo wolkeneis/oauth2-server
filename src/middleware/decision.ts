@@ -1,5 +1,5 @@
-import { AuthorizationError, ForbiddenError } from "../errors";
 import { RequestHandler } from "express";
+import { AuthorizationError, ForbiddenError } from "../errors";
 import { OAuth2Transaction } from "../index.js";
 import OAuth2Server from "../server";
 import { remove } from "../session";

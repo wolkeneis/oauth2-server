@@ -1,5 +1,5 @@
-import { BadRequestError, ForbiddenError } from "./errors";
 import { Request } from "express";
+import { BadRequestError, ForbiddenError } from "./errors";
 import { OAuth2SerializedTransaction, OAuth2Transaction } from "./index.js";
 import OAuth2Server from "./server";
 

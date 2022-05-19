@@ -1,5 +1,5 @@
-import { AuthorizationError } from "../errors";
 import { RequestHandler } from "express";
+import { AuthorizationError } from "../errors";
 import { ImmediateFunction, OAuth2Client, OAuth2Request, OAuth2Transaction, ValidateFunction } from "../index.js";
 import OAuth2Server from "../server";
 import { store } from "../session";

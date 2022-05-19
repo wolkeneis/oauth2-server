@@ -1,5 +1,5 @@
-import { BadRequestError } from "../errors";
 import { RequestHandler } from "express";
+import { BadRequestError } from "../errors";
 import { OAuth2Transaction } from "../index.js";
 import OAuth2Server from "../server";
 import { load } from "../session";

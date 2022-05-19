@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction, RequestHandler } from "express-serve-static-core";
-import CodeGrant from "./grant/code";
+import { NextFunction, Request, RequestHandler, Response } from "express-serve-static-core";
 import CodeExchange from "./exchange/code";
+import CodeGrant from "./grant/code";
 import OAuth2Server from "./server";
 
 declare module "express-serve-static-core" {

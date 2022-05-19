@@ -1,9 +1,9 @@
 import { RequestHandler } from "express-serve-static-core";
+import { ClientDeserializer, ClientSerializer, Exchange, Grant, ImmediateFunction, OAuth2Client, ValidateFunction } from "./index.js";
 import authorization from "./middleware/authorization";
 import decision from "./middleware/decision";
 import token from "./middleware/token";
 import transaction from "./middleware/transaction";
-import { ClientDeserializer, ClientSerializer, Exchange, Grant, ImmediateFunction, OAuth2Client, ValidateFunction } from "./index.js";
 
 export default class OAuth2Server {
   private _clientSerializer: ClientSerializer;

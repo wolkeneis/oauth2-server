@@ -1,6 +1,6 @@
 {
   "name": "@wolkeneis/oauth2-server",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "OAuth2 Server for express with passport using connect style middleware.",
   "keywords": [
     "oauth2",

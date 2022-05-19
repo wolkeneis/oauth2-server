@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
-import { Exchange, IssueTokenFunction, OAuth2Tokens } from "../index.js";
 import { ForbiddenError, TokenError } from "../errors";
+import { Exchange, IssueTokenFunction, OAuth2Tokens } from "../index.js";
 
 export default class CodeExchange implements Exchange {
   issue: IssueTokenFunction;
@@ -10,7 +10,7 @@ export default class CodeExchange implements Exchange {
   }
 
   _type() {
-    return "code";
+    return "authorization_code";
   }
 
   exchange(): RequestHandler {
@@ -40,14 +40,14 @@ export default class CodeExchange implements Exchange {
           return next(new TokenError("I denied the request because of an invalid authorization code or redirect_uri", "access_denied"));
         }
         res
+          .header({
+            "Cache-Control": "no-store",
+            Pragma: "no-cache"
+          })
           .json({
             access_token: tokens.accessToken,
             refresh_token: tokens.refreshToken,
             token_type: tokens.tokenType ?? "Bearer"
-          })
-          .header({
-            "Cache-Control": "no-store",
-            Pragma: "no-cache"
           })
           .end();
       } catch (error) {
