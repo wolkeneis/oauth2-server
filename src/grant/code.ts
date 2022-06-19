@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { stringify } from "querystring";
 import { v4 as uuidv4 } from "uuid";
-import { AuthorizationError } from "../errors";
+import { AuthorizationError } from "../errors.js";
 import { Grant, IssueCodeFunction, OAuth2Request, OAuth2Transaction } from "../index.js";
 
 export default class CodeGrant implements Grant {

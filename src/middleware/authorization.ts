@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
-import { AuthorizationError } from "../errors";
+import { AuthorizationError } from "../errors.js";
 import { ImmediateFunction, OAuth2Client, OAuth2Request, OAuth2Transaction, ValidateFunction } from "../index.js";
-import OAuth2Server from "../server";
-import { store } from "../session";
+import OAuth2Server from "../server.js";
+import { store } from "../session.js";
 
 export default function (server: OAuth2Server, validate: ValidateFunction, immediate: ImmediateFunction): RequestHandler {
   return async function (req, res, next) {

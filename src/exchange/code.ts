@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { ForbiddenError, TokenError } from "../errors";
+import { ForbiddenError, TokenError } from "../errors.js";
 import { Exchange, IssueTokenFunction, OAuth2Tokens } from "../index.js";
 
 export default class CodeExchange implements Exchange {

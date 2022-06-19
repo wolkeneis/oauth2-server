@@ -1,7 +1,7 @@
 import { Request } from "express";
-import { BadRequestError, ForbiddenError } from "./errors";
+import { BadRequestError, ForbiddenError } from "./errors.js";
 import { OAuth2SerializedTransaction, OAuth2Transaction } from "./index.js";
-import OAuth2Server from "./server";
+import OAuth2Server from "./server.js";
 
 export async function load(server: OAuth2Server, request: Request, transactionId: string): Promise<OAuth2Transaction<any, any, any>> {
   if (!request.session) {

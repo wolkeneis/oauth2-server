@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
-import { BadRequestError } from "../errors";
+import { BadRequestError } from "../errors.js";
 import { OAuth2Transaction } from "../index.js";
-import OAuth2Server from "../server";
-import { load } from "../session";
+import OAuth2Server from "../server.js";
+import { load } from "../session.js";
 
 export default function (server: OAuth2Server): RequestHandler {
   return async function (req, _res, next) {
